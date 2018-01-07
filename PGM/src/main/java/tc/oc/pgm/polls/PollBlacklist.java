@@ -1,9 +1,13 @@
-package tc.oc.pgm.pollablemaps;
+package tc.oc.pgm.polls;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import tc.oc.commons.core.plugin.PluginFacet;
 import tc.oc.pgm.Config;
 import tc.oc.pgm.PGM;
+import tc.oc.pgm.map.MapLibrary;
 import tc.oc.pgm.map.PGMMap;
 
 import java.io.IOException;
@@ -13,27 +17,30 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class PollableMaps {
+@Singleton
+public class PollBlacklist implements PluginFacet {
 
-    private List<PGMMap> maps;
+    private List<PGMMap> blacklistedMaps = new ArrayList<>();
 
-    public PollableMaps() {
-        maps = new ArrayList<PGMMap>();
-        loadPollableMaps();
+    private final MapLibrary mapLibrary;
+
+    @Inject PollBlacklist(MapLibrary mapLibrary) {
+        this.mapLibrary = mapLibrary;
     }
 
-    public List<PGMMap> getMaps() {
-        return maps;
+    @Override
+    public void enable() {
+        loadPollBlacklist();
     }
 
-    public void loadPollableMaps() {
+    public void loadPollBlacklist() {
         Path filepath = Config.Poll.getPollAbleMapPath();
         if (filepath == null) return;
         List<String> lines = null;
         try {
             lines = Files.readAllLines(filepath, Charsets.UTF_8);
         } catch (IOException e) {
-            PGM.get().getLogger().severe("Error in reading pollable maps from file!");
+            PGM.get().getLogger().severe("Error in reading poll blacklist from file!");
         }
         if (lines == null) return;
         ImmutableList.Builder<PGMMap> maps = ImmutableList.builder();
@@ -43,18 +50,18 @@ public class PollableMaps {
                 continue;
             }
 
-            Optional<PGMMap> map = PGM.get().getMapLibrary().getMapByNameOrId(line);
+            Optional<PGMMap> map = mapLibrary.getMapByNameOrId(line);
             if(map.isPresent()) {
                 maps.add(map.get());
             } else {
-                PGM.get().getMapLibrary().getLogger().severe("Unknown map '" + line
+                mapLibrary.getLogger().severe("Unknown map '" + line
                         + "' when parsing " + filepath.toString());
             }
         }
-        this.maps = maps.build();
+        this.blacklistedMaps = maps.build();
     }
 
-    public boolean isAllowed(PGMMap map) {
-        return !maps.contains(map);
+    public boolean isBlacklisted(PGMMap map) {
+        return blacklistedMaps.contains(map);
     }
 }

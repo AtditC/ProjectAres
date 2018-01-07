@@ -21,7 +21,6 @@ import tc.oc.minecraft.logging.BetterRaven;
 import tc.oc.pgm.antigrief.CraftingProtect;
 import tc.oc.pgm.channels.ChannelCommands;
 import tc.oc.pgm.commands.MapCommands;
-import tc.oc.pgm.commands.PollCommands;
 import tc.oc.pgm.commands.RotationControlCommands;
 import tc.oc.pgm.commands.RotationEditCommands;
 import tc.oc.pgm.events.ConfigLoadEvent;
@@ -39,9 +38,7 @@ import tc.oc.pgm.match.MatchLoader;
 import tc.oc.pgm.match.MatchManager;
 import tc.oc.pgm.match.MatchPlayer;
 import tc.oc.pgm.menu.gui.SettingMenuHelper;
-import tc.oc.pgm.pollablemaps.PollableMaps;
-import tc.oc.pgm.polls.PollListener;
-import tc.oc.pgm.polls.PollManager;
+import tc.oc.pgm.polls.PollBlacklist;
 import tc.oc.pgm.start.StartCommands;
 import tc.oc.pgm.tablist.MatchTabManager;
 import tc.oc.pgm.timelimit.TimeLimitCommands;
@@ -89,18 +86,6 @@ public final class PGM extends JavaPlugin {
         return mapdevLogger;
     }
 
-    private PollManager pollManager;
-
-    public static PollManager getPollManager() {
-        return pgm == null ? null : pgm.pollManager;
-    }
-
-    private PollableMaps pollableMaps;
-
-    public static PollableMaps getPollableMaps() {
-        return pgm == null ? null : pgm.pollableMaps;
-    }
-
     public MapLibrary getMapLibrary() {
         return mapLibrary;
     }
@@ -136,9 +121,6 @@ public final class PGM extends JavaPlugin {
             this.getServer().shutdown();
             return;
         }
-
-        this.pollManager = new PollManager(this);
-        this.pollableMaps = new PollableMaps();
 
         this.registerListeners();
 
@@ -196,7 +178,6 @@ public final class PGM extends JavaPlugin {
     private void setupCommands() {
         commands.register(MapCommands.class);
         commands.register(ChannelCommands.class);
-        commands.register(PollCommands.class);
         commands.register(RotationEditCommands.RotationEditParent.class);
         commands.register(RotationControlCommands.RotationControlParent.class);
         commands.register(TimeLimitCommands.class);
@@ -207,7 +188,6 @@ public final class PGM extends JavaPlugin {
     }
 
     private void registerListeners() {
-        this.registerEvents(new PollListener(this.pollManager, this.matchManager));
         this.registerEvents(new FormattingListener());
         this.registerEvents(new CraftingProtect());
         this.registerEvents(new ObjectivesFireworkListener());

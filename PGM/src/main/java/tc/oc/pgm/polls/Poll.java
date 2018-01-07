@@ -1,30 +1,31 @@
 package tc.oc.pgm.polls;
 
+import com.google.inject.Inject;
+import net.md_5.bungee.api.ChatColor;
+import tc.oc.commons.core.chat.Audiences;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import org.bukkit.ChatColor;
-import org.bukkit.Server;
-
 public abstract class Poll implements Runnable {
-    protected final Map<String, Boolean> votes = new HashMap<String, Boolean>();
-    protected final long startTime = System.currentTimeMillis();
-    protected final PollManager pollManager;
-    protected final Server server;
-    protected String initiator;
-    protected int timeLeftSeconds;
 
     public static String boldAqua = ChatColor.BOLD + "" + ChatColor.AQUA;
     public static String normalize = ChatColor.RESET + "" + ChatColor.DARK_AQUA;
-    public static String seperator = ChatColor.RESET + " | ";
+    public static String separator = ChatColor.RESET + " | ";
 
-    public Poll(PollManager pollManager, Server server, String initiator) {
+    protected final PollManager pollManager;
+    protected final String initiator;
+    protected final Audiences audiences;
+
+    @Inject public Poll(PollManager pollManager, String initiator, Audiences audiences) {
         this.pollManager = pollManager;
-        this.server = server;
         this.initiator = initiator;
+        this.audiences = audiences;
         this.voteFor(initiator);
-        timeLeftSeconds = 60;
     }
+
+    protected final Map<String, Boolean> votes = new HashMap<String, Boolean>();
+    protected int timeLeftSeconds = 60;
 
     public String getInitiator() {
         return this.initiator;
@@ -50,9 +51,6 @@ public abstract class Poll implements Runnable {
         return total;
     }
 
-    public long getStartTime() {
-        return this.startTime;
-    }
 
     public int getTimeLeftSeconds() {
         return timeLeftSeconds;
@@ -73,8 +71,8 @@ public abstract class Poll implements Runnable {
     public abstract String getDescriptionMessage();
 
     public String getStatusMessage() {
-        String message = boldAqua + "[Poll] " + this.getTimeLeftSeconds() + normalize + " seconds left" + seperator;
-        message += getActionString() + seperator + formatForAgainst();
+        String message = boldAqua + "[Poll] " + this.getTimeLeftSeconds() + normalize + " seconds left" + separator;
+        message += getActionString() + separator + formatForAgainst();
 
         return message;
     }
@@ -105,7 +103,7 @@ public abstract class Poll implements Runnable {
         if(timeLeftSeconds <= 0) {
             this.pollManager.endPoll(PollEndReason.Completed);
         } else if(timeLeftSeconds % 15 == 0 || (timeLeftSeconds < 15 && timeLeftSeconds % 5 == 0)) {
-            this.server.broadcastMessage(this.getStatusMessage());
+            this.audiences.localServer().sendMessage(this.getStatusMessage());
         }
         this.decrementTimeLeft();
     }
