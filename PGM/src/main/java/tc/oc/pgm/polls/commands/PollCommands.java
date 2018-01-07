@@ -8,12 +8,14 @@ import com.sk89q.minecraft.util.commands.NestedCommand;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import tc.oc.api.docs.PlayerId;
 import tc.oc.commons.bukkit.chat.PlayerComponent;
 import tc.oc.commons.bukkit.nick.IdentityProvider;
 import tc.oc.commons.core.chat.Audiences;
 import tc.oc.commons.core.chat.Component;
 import tc.oc.commons.core.commands.Commands;
 import tc.oc.commons.core.commands.TranslatableCommandException;
+import tc.oc.pgm.commands.CommandUtils;
 import tc.oc.pgm.polls.Poll;
 import tc.oc.pgm.polls.PollEndReason;
 import tc.oc.pgm.polls.PollManager;
@@ -51,14 +53,14 @@ public class PollCommands implements Commands {
     )
     @CommandPermissions("poll.vote")
     public void vote(CommandContext args, CommandSender sender) throws CommandException {
-        Player voter = tc.oc.commons.bukkit.commands.CommandUtils.senderToPlayer(sender);
+        PlayerId voter = CommandUtils.senderToMatchPlayer(sender).getPlayerId();
         Poll currentPoll = pollManager.getPoll();
         if(currentPoll != null) {
             if(args.getString(0).equalsIgnoreCase("yes")) {
-                currentPoll.voteFor(voter.getName());
+                currentPoll.voteFor(voter);
                 sender.sendMessage(new Component(ChatColor.GREEN).translate("poll.vote.for"));
             } else if (args.getString(0).equalsIgnoreCase("no")) {
-                currentPoll.voteAgainst(voter.getName());
+                currentPoll.voteAgainst(voter);
                 sender.sendMessage(new Component(ChatColor.RED).translate("poll.vote.against"));
             } else {
                 throw new TranslatableCommandException("poll.vote.value.invalid");

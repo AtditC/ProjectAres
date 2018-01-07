@@ -2,6 +2,8 @@ package tc.oc.pgm.polls;
 
 import com.google.inject.Inject;
 import net.md_5.bungee.api.ChatColor;
+import tc.oc.api.docs.PlayerId;
+import tc.oc.commons.bukkit.inventory.Slot;
 import tc.oc.commons.core.chat.Audiences;
 
 import java.util.HashMap;
@@ -14,20 +16,20 @@ public abstract class Poll implements Runnable {
     public static String separator = ChatColor.RESET + " | ";
 
     protected final PollManager pollManager;
-    protected final String initiator;
+    protected final PlayerId initiator;
     protected final Audiences audiences;
 
-    @Inject public Poll(PollManager pollManager, String initiator, Audiences audiences) {
+    @Inject public Poll(PollManager pollManager, PlayerId initiator, Audiences audiences) {
         this.pollManager = pollManager;
         this.initiator = initiator;
         this.audiences = audiences;
         this.voteFor(initiator);
     }
 
-    protected final Map<String, Boolean> votes = new HashMap<String, Boolean>();
+    protected final Map<PlayerId, Boolean> votes = new HashMap<>();
     protected int timeLeftSeconds = 60;
 
-    public String getInitiator() {
+    public PlayerId getInitiator() {
         return this.initiator;
     }
 
@@ -85,16 +87,16 @@ public abstract class Poll implements Runnable {
         return normalize + "Use " + boldAqua + "/vote [yes|no]" + normalize + " to vote";
     }
 
-    public boolean hasVoted(String playerName) {
-        return this.votes.containsKey(playerName);
+    public boolean hasVoted(PlayerId playerId) {
+        return this.votes.containsKey(playerId);
     }
 
-    public void voteFor(String playerName) {
-        this.votes.put(playerName, true);
+    public void voteFor(PlayerId playerId) {
+        this.votes.put(playerId, true);
     }
 
-    public void voteAgainst(String playerName) {
-        this.votes.put(playerName, false);
+    public void voteAgainst(PlayerId playerId) {
+        this.votes.put(playerId, false);
     }
 
     @Override

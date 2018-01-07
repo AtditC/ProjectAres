@@ -4,6 +4,7 @@ import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
+import tc.oc.api.docs.PlayerId;
 import tc.oc.commons.bukkit.chat.PlayerComponent;
 import tc.oc.commons.bukkit.nick.IdentityProvider;
 import tc.oc.commons.core.chat.Audiences;
@@ -14,13 +15,13 @@ import tc.oc.pgm.polls.PollManager;
 public class PollKick extends Poll {
 
     public interface Factory {
-        PollKick create(String initiator, Player player);
+        PollKick create(PlayerId initiator, Player player);
     }
 
     private final Player player;
     private final IdentityProvider identityProvider;
 
-    @AssistedInject PollKick(@Assisted String initiator, @Assisted Player player, PollManager pollManager, Audiences audiences, IdentityProvider identityProvider) {
+    @AssistedInject PollKick(@Assisted PlayerId initiator, @Assisted Player player, PollManager pollManager, Audiences audiences, IdentityProvider identityProvider) {
         super(pollManager, initiator, audiences);
         this.player = player;
         this.identityProvider = identityProvider;

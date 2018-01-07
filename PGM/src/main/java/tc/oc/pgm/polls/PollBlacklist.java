@@ -7,6 +7,7 @@ import com.google.inject.Singleton;
 import tc.oc.commons.core.plugin.PluginFacet;
 import tc.oc.pgm.Config;
 import tc.oc.pgm.PGM;
+import tc.oc.pgm.map.MapId;
 import tc.oc.pgm.map.MapLibrary;
 import tc.oc.pgm.map.PGMMap;
 
@@ -20,7 +21,7 @@ import java.util.Optional;
 @Singleton
 public class PollBlacklist implements PluginFacet {
 
-    private List<PGMMap> blacklistedMaps = new ArrayList<>();
+    private List<MapId> blacklistedMaps = new ArrayList<>();
 
     private final MapLibrary mapLibrary;
 
@@ -43,7 +44,7 @@ public class PollBlacklist implements PluginFacet {
             PGM.get().getLogger().severe("Error in reading poll blacklist from file!");
         }
         if (lines == null) return;
-        ImmutableList.Builder<PGMMap> maps = ImmutableList.builder();
+        ImmutableList.Builder<MapId> maps = ImmutableList.builder();
         for(String line : lines) {
             line = line.trim();
             if(line.isEmpty()) {
@@ -52,7 +53,7 @@ public class PollBlacklist implements PluginFacet {
 
             Optional<PGMMap> map = mapLibrary.getMapByNameOrId(line);
             if(map.isPresent()) {
-                maps.add(map.get());
+                maps.add(map.get().getId());
             } else {
                 mapLibrary.getLogger().severe("Unknown map '" + line
                         + "' when parsing " + filepath.toString());
@@ -62,6 +63,6 @@ public class PollBlacklist implements PluginFacet {
     }
 
     public boolean isBlacklisted(PGMMap map) {
-        return blacklistedMaps.contains(map);
+        return blacklistedMaps.contains(map.getId());
     }
 }

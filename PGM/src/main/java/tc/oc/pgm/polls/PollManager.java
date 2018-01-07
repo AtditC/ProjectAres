@@ -45,7 +45,7 @@ public class PollManager implements PluginFacet {
             task = scheduler.createRepeatingTask(Duration.ZERO, Duration.ofSeconds(5), poll);
             currentPoll = poll;
             eventBus.callEvent(new PollStartEvent(poll));
-            audiences.localServer().sendMessage(Poll.boldAqua + poll.getInitiator() + Poll.normalize + " has started a poll " + poll.getDescriptionMessage());
+            audiences.localServer().sendMessage(Poll.boldAqua + poll.getInitiator().username() + Poll.normalize + " has started a poll " + poll.getDescriptionMessage());
             Bukkit.broadcastMessage(Poll.tutorialMessage());
         } else {
             throw new TranslatableCommandException("poll.already.running");

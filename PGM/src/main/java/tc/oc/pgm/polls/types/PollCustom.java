@@ -2,7 +2,7 @@ package tc.oc.pgm.polls.types;
 
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
-import org.bukkit.command.CommandSender;
+import tc.oc.api.docs.PlayerId;
 import tc.oc.commons.core.chat.Audiences;
 import tc.oc.pgm.polls.Poll;
 import tc.oc.pgm.polls.PollManager;
@@ -10,13 +10,13 @@ import tc.oc.pgm.polls.PollManager;
 public class PollCustom extends Poll {
 
     public interface Factory {
-        PollCustom create(String text, CommandSender initiator);
+        PollCustom create(String text, PlayerId initiator);
     }
 
     private String text;
 
-    @AssistedInject PollCustom(@Assisted String text, @Assisted CommandSender initiator, PollManager pollManager, Audiences audiences) {
-        super(pollManager, initiator.getName(), audiences);
+    @AssistedInject PollCustom(@Assisted String text, @Assisted PlayerId initiator, PollManager pollManager, Audiences audiences) {
+        super(pollManager, initiator, audiences);
         this.text = text;
     }
 

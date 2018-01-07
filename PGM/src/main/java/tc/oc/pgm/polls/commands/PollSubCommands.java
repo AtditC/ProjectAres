@@ -7,14 +7,16 @@ import com.sk89q.minecraft.util.commands.CommandException;
 import com.sk89q.minecraft.util.commands.CommandPermissions;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import tc.oc.api.bukkit.users.OnlinePlayers;
+import tc.oc.api.minecraft.users.UserStore;
 import tc.oc.commons.bukkit.tokens.TokenUtil;
 import tc.oc.commons.core.commands.TranslatableCommandException;
 import tc.oc.commons.core.formatting.StringUtils;
 import tc.oc.commons.core.restart.RestartManager;
 import tc.oc.pgm.Config;
-import tc.oc.pgm.PGM;
 import tc.oc.pgm.commands.CommandUtils;
 import tc.oc.pgm.map.PGMMap;
+import tc.oc.pgm.match.MatchManager;
 import tc.oc.pgm.mutation.Mutation;
 import tc.oc.pgm.mutation.MutationQueue;
 import tc.oc.pgm.mutation.command.MutationCommands;
@@ -39,6 +41,9 @@ public class PollSubCommands {
     private final PollMutation.Factory pollMutationFactory;
     private final PollKick.Factory pollKickFactory;
     private final PollBlacklist pollBlacklist;
+    private final UserStore userStore;
+    private final OnlinePlayers onlinePlayers;
+    private final MatchManager matchManager;
 
     @Inject
     PollSubCommands(RestartManager restartManager,
@@ -48,7 +53,10 @@ public class PollSubCommands {
                  PollNextMap.Factory pollMapFactory,
                  PollMutation.Factory pollMutationFactory,
                  PollKick.Factory pollKickFactory,
-                 PollBlacklist pollBlacklist) {
+                 PollBlacklist pollBlacklist,
+                 UserStore userStore,
+                 OnlinePlayers onlinePlayers,
+                 MatchManager matchManager) {
         this.restartManager = restartManager;
         this.mutationQueue = mutationQueue;
         this.pollManager = pollManager;
@@ -57,6 +65,9 @@ public class PollSubCommands {
         this.pollMutationFactory = pollMutationFactory;
         this.pollKickFactory = pollKickFactory;
         this.pollBlacklist = pollBlacklist;
+        this.userStore = userStore;
+        this.onlinePlayers = onlinePlayers;
+        this.matchManager = matchManager;
     }
 
 
@@ -76,7 +87,7 @@ public class PollSubCommands {
         if(player.hasPermission("pgm.poll.kick.exempt") && !initiator.hasPermission("pgm.poll.kick.override")) {
             throw new TranslatableCommandException("poll.kick.exempt");
         } else {
-            pollManager.startPoll(pollKickFactory.create(initiator.getName(), player));
+            pollManager.startPoll(pollKickFactory.create(userStore.playerId(tc.oc.commons.bukkit.commands.CommandUtils.senderToPlayer(sender)), player));
         }
     }
 
@@ -94,34 +105,31 @@ public class PollSubCommands {
             return CommandUtils.completeMapName(mapName);
         }
 
-        if (!Config.Poll.enabled()) {
+        if(!Config.Poll.enabled()) {
             throw new TranslatableCommandException("poll.disabled");
         }
 
-        if (restartManager.isRestartRequested()) {
+        if(restartManager.isRestartRequested()) {
             throw new TranslatableCommandException("poll.map.restarting");
         }
-        if (PGM.getMatchManager().hasMapSet()) {
+        if(matchManager.hasMapSet()) {
             throw new TranslatableCommandException("poll.map.alreadyset");
         }
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
-            if (TokenUtil.getUser(player).maptokens() < 1) {
-                throw new TranslatableCommandException("tokens.map.fail");
-            }
+        if(TokenUtil.getUser(sender).maptokens() < 1) {
+            throw new TranslatableCommandException("tokens.map.fail");
         }
 
         PGMMap nextMap = CommandUtils.getMap(args.getJoinedStrings(0), sender);
 
-        if (pollBlacklist.isBlacklisted(nextMap) && !sender.hasPermission("poll.next.override")) {
+        if(pollBlacklist.isBlacklisted(nextMap) && !sender.hasPermission("poll.next.override")) {
             throw new TranslatableCommandException("poll.map.notallowed");
         }
 
-        if (PGM.get().getServer().getOnlinePlayers().size() * 4 / 5 > nextMap.getDocument().max_players() && !sender.hasPermission("poll.next.override")) {
+        if(onlinePlayers.count() * 4 / 5 > nextMap.getDocument().max_players() && !sender.hasPermission("poll.next.override")) {
             throw new TranslatableCommandException("poll.map.toomanyplayers");
         }
 
-        pollManager.startPoll(pollMapFactory.create(sender, nextMap));
+        pollManager.startPoll(pollMapFactory.create(sender, nextMap, userStore.playerId(tc.oc.commons.bukkit.commands.CommandUtils.senderToPlayer(sender))));
         return null;
     }
 
@@ -135,21 +143,16 @@ public class PollSubCommands {
     @CommandPermissions("poll.mutation")
     public List<String> pollMutation(CommandContext args, CommandSender sender) throws CommandException {
 
-        if (args.getSuggestionContext() != null) {
-            Collection<Mutation> availableMutations = Sets.newHashSet(Mutation.values());
-            availableMutations.removeAll(mutationQueue.mutations());
-            return StringUtils.complete(args.getSuggestionContext().getPrefix(), availableMutations.stream().map(mutation -> mutation.name().toLowerCase()));
+        if(args.getSuggestionContext() != null) {
+            return StringUtils.complete(args.getSuggestionContext().getPrefix(), mutationQueue.mutationsAvailable().stream().map(mutation -> mutation.name().toLowerCase()));
         }
 
-        if (!Config.Poll.enabled()) {
+        if(!Config.Poll.enabled()) {
             throw new TranslatableCommandException("poll.disabled");
         }
 
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
-            if (TokenUtil.getUser(player).mutationtokens() < 1) {
-                throw new TranslatableCommandException("tokens.mutation.fail");
-            }
+        if(TokenUtil.getUser(sender).mutationtokens() < 1) {
+            throw new TranslatableCommandException("tokens.mutation.fail");
         }
 
         String mutationString = args.getString(0);
@@ -157,13 +160,13 @@ public class PollSubCommands {
         Mutation mutation = StringUtils.bestFuzzyMatch(mutationString, Sets.newHashSet(Mutation.values()), 0.9);
         if(mutation == null) {
             throw new TranslatableCommandException("command.mutation.error.find", mutationString);
-        } else if(MutationCommands.getInstance().getMutationQueue().mutations().contains(mutation)) {
+        } else if(mutationQueue.mutations().contains(mutation)) {
             throw new TranslatableCommandException(true ? "command.mutation.error.enabled" : "command.mutation.error.disabled", mutation.getComponent(net.md_5.bungee.api.ChatColor.RED));
-        } else if (!mutation.isPollable() && !sender.hasPermission("poll.mutation.override")) {
+        } else if(!mutation.isPollable() && !sender.hasPermission("poll.mutation.override")) {
             throw new TranslatableCommandException("command.mutation.error.illegal", mutationString);
         }
 
-        pollManager.startPoll(pollMutationFactory.create(sender, mutation));
+        pollManager.startPoll(pollMutationFactory.create(sender, mutation, userStore.playerId(tc.oc.commons.bukkit.commands.CommandUtils.senderToPlayer(sender))));
         return null;
     }
 
@@ -178,6 +181,6 @@ public class PollSubCommands {
     public void pollCustom(CommandContext args, CommandSender sender) throws CommandException {
         String text = args.getJoinedStrings(0);
 
-        pollManager.startPoll(pollCustomFactory.create(text, sender));
+        pollManager.startPoll(pollCustomFactory.create(text, userStore.playerId(tc.oc.commons.bukkit.commands.CommandUtils.senderToPlayer(sender))));
     }
 }
