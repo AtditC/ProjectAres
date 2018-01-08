@@ -21,33 +21,32 @@ public class PollKick extends Poll {
         PollKick create(PlayerId initiator, Player player);
     }
 
-    private final Player player;
+    private final PlayerId player;
     private final IdentityProvider identityProvider;
     private final PunishmentCreator punishmentCreator;
     private final UserStore userStore;
 
     @AssistedInject PollKick(@Assisted PlayerId initiator, @Assisted Player player, PollManager pollManager, Audiences audiences, IdentityProvider identityProvider, PunishmentCreator punishmentCreator, UserStore userStore) {
         super(pollManager, initiator, audiences);
-        this.player = player;
         this.identityProvider = identityProvider;
         this.punishmentCreator = punishmentCreator;
         this.userStore = userStore;
+        this.player = userStore.playerId(player);
     }
 
     @Override
     public void executeAction() {
-        PlayerId kicked = userStore.playerId(player);
-        punishmentCreator.create(null, kicked, "The poll to kick " + kicked.username() + " succeeded", PunishmentDoc.Type.KICK, null, false, false, true);
+        punishmentCreator.create(null, player, "The poll to kick " + player.username() + " succeeded", PunishmentDoc.Type.KICK, null, false, false, true);
         audiences.localServer().sendMessage(new Component(ChatColor.DARK_AQUA).translate("poll.kick.success", new PlayerComponent(identityProvider.currentIdentity(player))));
     }
 
     @Override
     public String getActionString() {
-        return normalize + "Kick: " + boldAqua + this.player;
+        return normalize + "Kick: " + boldAqua + this.player.username();
     }
 
     @Override
     public String getDescriptionMessage() {
-        return "to kick " + boldAqua +  this.player;
+        return "to kick " + boldAqua +  this.player.username();
     }
 }
