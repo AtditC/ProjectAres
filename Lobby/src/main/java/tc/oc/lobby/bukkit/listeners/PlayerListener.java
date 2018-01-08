@@ -93,7 +93,6 @@ public class PlayerListener implements PluginFacet, Listener {
         this.minecraftService = minecraftService;
         this.onlinePlayers = onlinePlayers;
         this.audiences = audiences;
-        this.bossBarFactory = bossBarFactory;
         this.renderer = renderer;
         this.eventBus = eventBus;
         this.generalFormatter = generalFormatter;
@@ -139,19 +138,6 @@ public class PlayerListener implements PluginFacet, Listener {
 
         event.getPlayer().addAttachment(lobby, Permissions.OBSERVER, true);
 
-        if (player.hasPermission("lobby.overhead-news")) {
-            final String datacenter = minecraftService.getLocalServer().datacenter();
-            final Component news = new Component(ChatColor.GREEN)
-                .extra(new TranslatableComponent(
-                    "lobby.news",
-                    new Component(ChatColor.GOLD, ChatColor.BOLD).extra(generalFormatter.publicHostname())
-                ));
-
-            final BossBar bar = bossBarFactory.createBossBar(player, renderer.render(news, player), BarColor.BLUE, BarStyle.SOLID);
-            bar.setProgress(1);
-            bar.setVisible(true);
-        }
-
         if(!player.hasPermission("lobby.disabled-permissions-exempt")) {
             for(PermissionAttachmentInfo attachment : player.getEffectivePermissions()) {
                 if(config.getDisabledPermissions().contains(attachment.getPermission())) {
@@ -170,33 +156,6 @@ public class PlayerListener implements PluginFacet, Listener {
         final User user = event.getUser();
         final Player player = event.getPlayer();
         final Audience audience = audiences.get(player);
-
-        audience.sendMessage(Components.blank());
-
-        audience.sendMessage(
-            new HeaderComponent(
-                new Component(GREEN).translate("welcome", generalFormatter.brandName())
-            )
-        );
-
-        audience.sendMessage(
-            new Component(DARK_AQUA)
-                .translate(
-                    "welcome.instructions",
-                    new Component(AQUA).translate("servers.lobby"),
-                    new Component(GOLD).translate("welcome.sign"),
-                    new Component(GREEN).translate("navigator.title")
-                )
-        );
-
-        audience.sendMessage(new HeaderComponent(
-            new Component(ChatColor.GREEN)
-                .translate(
-                    "welcome.visitWebsite",
-                    Links.homeLink()
-                )
-        ));
-    }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void respawn(final PlayerRespawnEvent event) {
