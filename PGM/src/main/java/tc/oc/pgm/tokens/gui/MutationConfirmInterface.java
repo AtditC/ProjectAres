@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import tc.oc.commons.bukkit.gui.buttons.Button;
 import tc.oc.commons.bukkit.gui.interfaces.ChestInterface;
 import tc.oc.commons.bukkit.util.ItemCreator;
+import tc.oc.pgm.commands.CommandUtils;
 import tc.oc.pgm.mutation.Mutation;
 import tc.oc.pgm.polls.PollManager;
 import tc.oc.pgm.polls.types.PollMutation;
@@ -37,7 +38,7 @@ public class MutationConfirmInterface extends ChestInterface {
             @Override
             public void function(Player player) {
                 try {
-                    pollManager.startPoll(pollMutationFactory.create(player, mutation));
+                    pollManager.startPoll(pollMutationFactory.create(player, mutation, CommandUtils.senderToMatchPlayer(player).getPlayerId()));
                     player.closeInventory();
                 } catch (CommandException e) {
                     player.sendMessage(ChatColor.RED + "Another poll is already running.");
