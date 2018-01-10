@@ -14,8 +14,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Scoreboard;
+//import org.bukkit.scoreboard.Objective;
+//import org.bukkit.scoreboard.Scoreboard;
 import tc.oc.api.bukkit.users.BukkitUserStore;
 import tc.oc.api.docs.PlayerId;
 import tc.oc.api.docs.User;
@@ -28,17 +28,17 @@ import tc.oc.lobby.bukkit.Utils;
 import tc.oc.lobby.bukkit.gizmos.GizmoUtils;
 import tc.oc.lobby.bukkit.gizmos.Gizmos;
 
-@Singleton
+/*@Singleton
 public class RaindropsListener implements PluginFacet, Listener {
     public static final Map<Player, Integer> raindrops = Maps.newHashMap();
 
-    private static Objective getOrCreateObjective(Scoreboard scoreboard, String name, String criteria) {
+    /*private static Objective getOrCreateObjective(Scoreboard scoreboard, String name, String criteria) {
         Objective obj = scoreboard.getObjective(name);
         if(obj == null) {
             obj = scoreboard.registerNewObjective(name, criteria);
         }
         return obj;
-    }
+    }*/
 
     private final GeneralFormatter generalFormatter;
     private final ComponentRenderContext renderer;
@@ -92,7 +92,6 @@ public class RaindropsListener implements PluginFacet, Listener {
 
         final Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
         Objective objective = scoreboard.getObjective(player.getName());
-
         Integer oldCount = raindrops.get(player);
         if(oldCount != null) {
             Utils.removeScore(player, String.format("%,d", oldCount));
@@ -104,3 +103,4 @@ public class RaindropsListener implements PluginFacet, Listener {
         Utils.giveGhastTear(player, count);
     }
 }
+*/
