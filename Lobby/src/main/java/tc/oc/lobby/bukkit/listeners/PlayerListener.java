@@ -10,9 +10,6 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TranslatableComponent;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.boss.BarColor;
-import org.bukkit.boss.BarStyle;
-import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventBus;
 import org.bukkit.event.EventHandler;
@@ -77,7 +74,6 @@ public class PlayerListener implements PluginFacet, Listener {
     private final MinecraftService minecraftService;
     private final OnlinePlayers onlinePlayers;
     private final Audiences audiences;
-    private final BossBarFactory bossBarFactory;
     private final ComponentRenderContext renderer;
     private final EventBus eventBus;
     private final GeneralFormatter generalFormatter;
