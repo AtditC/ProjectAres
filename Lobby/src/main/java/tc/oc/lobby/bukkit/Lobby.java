@@ -7,16 +7,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.java.JavaPlugin;
-//import org.bukkit.scoreboard.Objective;
-//import org.bukkit.scoreboard.Scoreboard;
-//import org.bukkit.scoreboard.Team;
 import tc.oc.commons.bukkit.inject.BukkitPluginManifest;
 import tc.oc.commons.bukkit.inventory.Slot;
 import tc.oc.commons.bukkit.logging.MapdevLogger;
 import tc.oc.commons.bukkit.teleport.NavigatorInterface;
 import tc.oc.inject.ProtectedBinder;
-import tc.oc.lobby.bukkit.gizmos.Gizmo;
-import tc.oc.lobby.bukkit.gizmos.Gizmos;
 import tc.oc.lobby.bukkit.listeners.EnvironmentControlListener;
 
 public class Lobby extends JavaPlugin implements Listener {
@@ -43,15 +38,10 @@ public class Lobby extends JavaPlugin implements Listener {
         mapdevLogger.setUseParentHandlers(true);
 
         this.getServer().getPluginManager().registerEvents(new EnvironmentControlListener(), this);
-        this.getServer().getPluginManager().registerEvents(new Gizmos(), this);
         this.getServer().getMessenger().registerOutgoingPluginChannel(this, BUNGEE_CHANNEL);
 
         //this.setupScoreboard();
         this.loadConfig();
-
-        for(Gizmo gizmo : Gizmos.gizmos) {
-            Bukkit.getPluginManager().addPermission(new Permission(gizmo.getPermissionNode(), PermissionDefault.FALSE));
-        }
 
         Settings settings = new Settings(this);
         settings.register();
