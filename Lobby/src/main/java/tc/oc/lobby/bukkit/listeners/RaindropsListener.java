@@ -28,17 +28,17 @@ import tc.oc.lobby.bukkit.Utils;
 import tc.oc.lobby.bukkit.gizmos.GizmoUtils;
 import tc.oc.lobby.bukkit.gizmos.Gizmos;
 
-/*@Singleton
+@Singleton
 public class RaindropsListener implements PluginFacet, Listener {
     public static final Map<Player, Integer> raindrops = Maps.newHashMap();
-
-    /*private static Objective getOrCreateObjective(Scoreboard scoreboard, String name, String criteria) {
+/*
+    private static Objective getOrCreateObjective(Scoreboard scoreboard, String name, String criteria) {
         Objective obj = scoreboard.getObjective(name);
         if(obj == null) {
             obj = scoreboard.registerNewObjective(name, criteria);
         }
         return obj;
-    }*/
+    }
 
     private final GeneralFormatter generalFormatter;
     private final ComponentRenderContext renderer;
@@ -102,5 +102,4 @@ public class RaindropsListener implements PluginFacet, Listener {
 
         Utils.giveGhastTear(player, count);
     }
-}
-*/
+}*/
