@@ -26,7 +26,7 @@ import tc.oc.commons.bukkit.raindrops.PlayerRecieveRaindropsEvent;
 
 public class GizmoUtils {
 
-    @Inject private static SyncExecutor syncExecutor;
+    /*@Inject private static SyncExecutor syncExecutor;
     @Inject private static UserService userService;
 
     public static void openMenu(Player player) {
@@ -106,5 +106,5 @@ public class GizmoUtils {
                 ));
             })
         );
-    }
+    }*/
 }
