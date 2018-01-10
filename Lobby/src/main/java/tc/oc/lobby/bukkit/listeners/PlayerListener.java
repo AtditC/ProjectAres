@@ -31,7 +31,6 @@ import tc.oc.api.docs.User;
 import tc.oc.api.docs.virtual.ServerDoc;
 import tc.oc.api.minecraft.MinecraftService;
 import tc.oc.api.util.Permissions;
-import tc.oc.commons.bukkit.bossbar.BossBarFactory;
 import tc.oc.commons.bukkit.chat.Audiences;
 import tc.oc.commons.bukkit.chat.ComponentRenderContext;
 import tc.oc.commons.bukkit.chat.HeaderComponent;
@@ -83,7 +82,7 @@ public class PlayerListener implements PluginFacet, Listener {
     private double spawnRadius;
     private @Nullable RequestRestartEvent.Deferral restartDeferral;
 
-    @Inject PlayerListener(Plugin lobby, LobbyConfig config, MinecraftService minecraftService, OnlinePlayers onlinePlayers, Audiences audiences, BossBarFactory bossBarFactory, ComponentRenderContext renderer, EventBus eventBus, GeneralFormatter generalFormatter) {
+    @Inject PlayerListener(Plugin lobby, LobbyConfig config, MinecraftService minecraftService, OnlinePlayers onlinePlayers, Audiences audiences,  ComponentRenderContext renderer, EventBus eventBus, GeneralFormatter generalFormatter) {
         this.lobby = lobby;
         this.config = config;
         this.minecraftService = minecraftService;
