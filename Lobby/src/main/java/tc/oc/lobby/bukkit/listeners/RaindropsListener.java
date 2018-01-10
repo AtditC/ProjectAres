@@ -14,8 +14,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
-//import org.bukkit.scoreboard.Objective;
-//import org.bukkit.scoreboard.Scoreboard;
 import tc.oc.api.bukkit.users.BukkitUserStore;
 import tc.oc.api.docs.PlayerId;
 import tc.oc.api.docs.User;
@@ -25,8 +23,6 @@ import tc.oc.commons.bukkit.raindrops.RaindropUtil;
 import tc.oc.commons.core.format.GeneralFormatter;
 import tc.oc.commons.core.plugin.PluginFacet;
 import tc.oc.lobby.bukkit.Utils;
-import tc.oc.lobby.bukkit.gizmos.GizmoUtils;
-import tc.oc.lobby.bukkit.gizmos.Gizmos;
 
 @Singleton
 public class RaindropsListener implements PluginFacet, Listener {
