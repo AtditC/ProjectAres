@@ -7,9 +7,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.Team;
+//import org.bukkit.scoreboard.Objective;
+//import org.bukkit.scoreboard.Scoreboard;
+//import org.bukkit.scoreboard.Team;
 import tc.oc.commons.bukkit.inject.BukkitPluginManifest;
 import tc.oc.commons.bukkit.inventory.Slot;
 import tc.oc.commons.bukkit.logging.MapdevLogger;
@@ -46,7 +46,7 @@ public class Lobby extends JavaPlugin implements Listener {
         this.getServer().getPluginManager().registerEvents(new Gizmos(), this);
         this.getServer().getMessenger().registerOutgoingPluginChannel(this, BUNGEE_CHANNEL);
 
-        this.setupScoreboard();
+        //this.setupScoreboard();
         this.loadConfig();
 
         for(Gizmo gizmo : Gizmos.gizmos) {
@@ -59,7 +59,7 @@ public class Lobby extends JavaPlugin implements Listener {
         navigatorInterface.setOpenButtonSlot(Slot.Hotbar.forPosition(0));
     }
 
-    private void setupScoreboard() {
+    /*private void setupScoreboard() {
         Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
         for(Team team : scoreboard.getTeams()) {
             team.unregister();
@@ -67,7 +67,7 @@ public class Lobby extends JavaPlugin implements Listener {
         for(Objective objective : scoreboard.getObjectives()) {
             objective.unregister();
         }
-    }
+    }*/
 
     private void loadConfig() {
         this.getConfig().options().copyDefaults(true);
