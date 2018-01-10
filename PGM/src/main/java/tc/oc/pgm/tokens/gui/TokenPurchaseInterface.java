@@ -35,8 +35,8 @@ public class TokenPurchaseInterface extends ChestInterface {
 
         buttons.add(new Button(
                 new ItemCreator(Material.EMERALD)
-                        .setName(Constants.PREFIX + "You can buy Tokens at")
-                        .addLore(Constants.SUBTEXT + "stratusnetwork.buycraft.net")
+                        .setName(Constants.PREFIX + "You can't buy Tokens. ")
+                        .addLore(Constants.SUBTEXT + "Nowhere.")
                 , 4));
 
         buttons.add(new Button(
