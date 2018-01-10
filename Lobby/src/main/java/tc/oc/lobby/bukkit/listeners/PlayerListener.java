@@ -156,6 +156,7 @@ public class PlayerListener implements PluginFacet, Listener {
         final User user = event.getUser();
         final Player player = event.getPlayer();
         final Audience audience = audiences.get(player);
+    }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void respawn(final PlayerRespawnEvent event) {
