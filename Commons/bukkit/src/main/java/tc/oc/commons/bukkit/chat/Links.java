@@ -14,7 +14,7 @@ public class Links {
     private Links() {}
 
     public static final String HOST = "atdit.de";
-    public static final String SHOP_HOST = "non_existant";
+    public static final String SHOP_HOST = "atdit.de";
 
     public static URI homeUri(String path) throws URISyntaxException {
         return new URI("http", HOST, path, null);
