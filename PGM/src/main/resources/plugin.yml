@@ -56,7 +56,6 @@ permissions:
   pgm.join.choose:
     description: Allows a player to join a specific team.
     children:
-    default: true
       pgm.join.choose.observing: true
       pgm.join.choose.participating: true
   pgm.join.choose.observing:
